@@ -4,6 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from pipeline.context import Context
+from pipeline.load import load_parcels
 from pipeline.parcels import fetch_parcels
 
 
@@ -19,7 +20,7 @@ def step_fetch_parcels(ctx: Context) -> None:
 
 
 def step_load_parcels(ctx: Context) -> None:
-    raise NotImplementedError("load_parcels lands in #9")
+    load_parcels(ctx)
 
 
 STEPS: list[Step] = [

@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "node --watch src/main.ts",
     "start": "node src/main.ts",
-    "typecheck": "tsc -p ."
+    "typecheck": "tsc -p .",
+    "migrate": "node --env-file-if-exists=../../.env src/db/migrate.ts"
   },
   "dependencies": {
     "@effect/platform-node": "4.1.2",
+    "@effect/sql-pg": "4.1.2",
     "@vinomatrix/domain": "workspace:*",
     "effect": "4.1.2"
   }
