@@ -24,3 +24,6 @@ Thumbs.db
 
 # Upstream source mirrors (pnpm skills:mount)
 skills/external/
+
+# Chromium crashpad logs written by editor tooling
+debug.log
