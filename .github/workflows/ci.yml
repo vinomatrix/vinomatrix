@@ -41,7 +41,8 @@ jobs:
         working-directory: .
         run: echo "found=${{ hashFiles('tools/pipeline/pyproject.toml') != '' }}" >> "$GITHUB_OUTPUT"
       - if: steps.present.outputs.found == 'true'
-        uses: astral-sh/setup-uv@v10
+        # setup-uv publishes exact tags only, no floating major tag
+        uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
       - if: steps.present.outputs.found == 'true'
