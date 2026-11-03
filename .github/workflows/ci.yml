@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  node:
+    name: check + test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # pnpm version comes from packageManager in package.json
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm test
+
+  pipeline:
+    name: pipeline (ruff + pytest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/pipeline
+    steps:
+      - uses: actions/checkout@v7
+      # The pipeline lands in #5; until then this job passes without running anything.
+      - id: present
+        working-directory: .
+        run: echo "found=${{ hashFiles('tools/pipeline/pyproject.toml') != '' }}" >> "$GITHUB_OUTPUT"
+      - if: steps.present.outputs.found == 'true'
+        # setup-uv publishes exact tags only, no floating major tag
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+      - if: steps.present.outputs.found == 'true'
+        run: uv run ruff check .
+      - if: steps.present.outputs.found == 'true'
+        run: uv run ruff format --check .
+      - if: steps.present.outputs.found == 'true'
+        run: uv run pytest
