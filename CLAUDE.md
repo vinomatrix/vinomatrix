@@ -6,13 +6,13 @@ Read `docs/PITCH.md` first. It defines scope; anything not in M1–M5 is out unl
 
 ```
 packages/domain      Effect Schema + decoder engine. Pure. No I/O, no React, no Node APIs.
-apps/api             @effect/platform HttpApi server. PostGIS via @effect/sql-pg. Better Auth.
+apps/api             HttpApi server (effect/http-api, Effect v4). PostGIS via @effect/sql-pg. Better Auth.
 apps/web             Vite + React 19. MapLibre via react-map-gl. TanStack Query. Recharts.
 tools/pipeline       Python 3.12 (uv). Loads SITN / swissALTI3D into PostGIS. Idempotent.
 docs/                PITCH.md, BACKLOG.md, ADRs in docs/adr/NNNN-title.md
 ```
 
-pnpm workspaces. Node 22. TypeScript `strict: true`, `noUncheckedIndexedAccess: true`.
+pnpm workspaces. Node ≥ 22.18 (runs `.ts` directly via type stripping; relative imports use `.ts`). TypeScript `strict: true`, `noUncheckedIndexedAccess: true`.
 
 ## Commands
 
@@ -33,7 +33,9 @@ Run `pnpm check && pnpm test` before every commit. CI runs the same.
 **Effect**
 
 - Domain and API code is Effect. Errors are typed (`Data.TaggedError`), never thrown.
-- Services via `Context.Tag` + `Layer`. Dependencies are injected, never imported as singletons.
+- Effect v4: HTTP lives in `effect/http` and `effect/http-api`, not `@effect/platform`.
+- Services via `Context.Service` + `Layer`. Dependencies are injected, never imported as singletons.
+- API architecture (ports & adapters): see `docs/adr/0001-api-architecture.md`. Inbound port = HttpApi contract in `packages/domain/src/api/`; outbound ports = services in `apps/api/src/<feature>/` with their adapters as static layers (`.layer`, `.layerMemory`). Ports only where there is I/O.
 - Schemas in `packages/domain/src/schema/`. API contract in `packages/domain/src/api/` (HttpApi groups). The web client imports the contract — never hand-writes request/response types.
 - No `Effect.runPromise` outside `main.ts` and tests.
 
