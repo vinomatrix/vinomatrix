@@ -2,14 +2,9 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from pathlib import Path
 
-CACHE_DIR = Path(__file__).resolve().parents[2] / ".cache"
-
-
-@dataclass(frozen=True)
-class Context:
-    cache_dir: Path = CACHE_DIR
+from pipeline.context import Context
+from pipeline.parcels import fetch_parcels
 
 
 @dataclass(frozen=True)
@@ -20,7 +15,7 @@ class Step:
 
 
 def step_fetch_parcels(ctx: Context) -> None:
-    raise NotImplementedError("fetch_parcels lands in #8")
+    fetch_parcels(ctx)
 
 
 def step_load_parcels(ctx: Context) -> None:
@@ -30,7 +25,7 @@ def step_load_parcels(ctx: Context) -> None:
 STEPS: list[Step] = [
     Step(
         "fetch_parcels",
-        "Fetch Neuchâtel vineyard parcels from SITN WFS → GeoJSON (EPSG:2056)",
+        "Fetch NE vineyard parcels from geodienste.ch WFS → GeoJSON (EPSG:2056)",
         step_fetch_parcels,
     ),
     Step(

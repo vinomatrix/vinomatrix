@@ -25,15 +25,15 @@
 
 ## 3. Data
 
-| Layer                                | Source                                                                                                           | Licence / notes                                          |
-| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Vineyard parcels (cadastre viticole) | SITN (géoportail Neuchâtel) — WFS/GeoJSON                                                                        | Open data NE; verify attribution text                    |
-| AOC Neuchâtel zones & communes       | SITN / OFAG                                                                                                      | Open                                                     |
-| Terrain (slope, aspect, altitude)    | swisstopo swissALTI3D                                                                                            | Open government data                                     |
-| Soil                                 | Carte des sols NE / NABODAT where available                                                                      | Check coverage; fallback: manual soil classes per sector |
-| Climate                              | MeteoSwiss normals (Neuchâtel station) + altitude lapse rate                                                     | Open                                                     |
-| Grapes (cépages)                     | Hand-curated table: Pinot Noir, Chasselas, Chardonnay, Pinot Gris, Gamaret, Garanoir, Sauvignon, Gewürztraminer… | Our own                                                  |
-| Decoder rules                        | Hand-written, reviewed with an oenologist later                                                                  | Our own; versioned                                       |
+| Layer                                | Source                                                                                                           | Licence / notes                                                       |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Vineyard parcels (cadastre viticole) | SITN data via geodienste.ch WFS (MGDM 151.1)                                                                     | Free use with attribution; registration required — see `docs/DATA.md` |
+| AOC Neuchâtel zones & communes       | SITN / OFAG                                                                                                      | Open                                                                  |
+| Terrain (slope, aspect, altitude)    | swisstopo swissALTI3D                                                                                            | Open government data                                                  |
+| Soil                                 | Carte des sols NE / NABODAT where available                                                                      | Check coverage; fallback: manual soil classes per sector              |
+| Climate                              | MeteoSwiss normals (Neuchâtel station) + altitude lapse rate                                                     | Open                                                                  |
+| Grapes (cépages)                     | Hand-curated table: Pinot Noir, Chasselas, Chardonnay, Pinot Gris, Gamaret, Garanoir, Sauvignon, Gewürztraminer… | Our own                                                               |
+| Decoder rules                        | Hand-written, reviewed with an oenologist later                                                                  | Our own; versioned                                                    |
 
 Pipeline (Python, `tools/pipeline`): fetch → clean → compute slope/aspect per parcel → load into PostGIS. Idempotent, runs in CI on a schedule.
 
