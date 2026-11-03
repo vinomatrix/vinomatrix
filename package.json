@@ -12,7 +12,10 @@
     "typecheck": "tsc -p . && pnpm -r --if-present typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "check": "pnpm typecheck && pnpm lint && prettier --check ."
+    "check": "pnpm typecheck && pnpm lint && prettier --check .",
+    "skills:mount": "node scripts/skills-external.mjs mount",
+    "skills:update": "node scripts/skills-external.mjs update",
+    "skills:unmount": "node scripts/skills-external.mjs unmount"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
