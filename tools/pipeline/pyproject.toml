@@ -1,0 +1,30 @@
+[project]
+name = "vinomatrix-pipeline"
+version = "0.0.0"
+description = "Loads Neuchâtel vineyard geodata (SITN, swissALTI3D) into PostGIS."
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.scripts]
+pipeline = "pipeline.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=9.2", "ruff>=0.17"]
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "pipeline"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# ANN enforces type hints everywhere (CLAUDE.md).
+select = ["E", "F", "W", "I", "UP", "B", "ANN", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
