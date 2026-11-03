@@ -1,0 +1,23 @@
+# Node
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.vite/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Python pipeline
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+tools/pipeline/.cache/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
