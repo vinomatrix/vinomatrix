@@ -60,12 +60,26 @@ Run `pnpm check && pnpm test` before every commit. CI runs the same.
 - `uv` for deps, `ruff` for lint/format, `pytest`. Type hints everywhere.
 - Each step is a function `step_x(ctx) -> None`, re-runnable. Downloads cached under `tools/pipeline/.cache/` (gitignored).
 
+## Upstream sources
+
+Read-only mirrors of libraries we depend on, cloned under `skills/external/` (gitignored) at the version we install. Declared in `skills/external.json`.
+
+```
+pnpm skills:mount [-- name]     shallow clone at the pinned ref (skips if mounted)
+pnpm skills:update [-- name]    re-sync to the pinned ref, discarding local edits
+pnpm skills:unmount [-- name]   delete the mirror
+```
+
+- Effect: start from `skills/external/effect/ai-docs/src/`, never effect.website (it documents v3).
+- Never edit a mirror. If one is missing, ask the user to mount it — don't clone it yourself.
+- When a dependency bump moves a mirrored library, update its `ref` in `skills/external.json` in the same PR and run `pnpm skills:update -- <name>`.
+
 ## Git & GitHub
 
 - Branch per issue: `feat/12-parcel-panel`, `fix/34-aspect-sign`. Never commit on `main`.
 - Conventional commits: `feat(web): parcel side panel (#12)`. Reference the issue in the title.
 - One PR per issue, small. PR body: what / why / how tested / screenshot if UI.
-- Squash-merge. Delete the branch.
+- Merge commit (no squash). Delete the branch.
 - Use `gh` for issues, labels, milestones, PRs. Labels: `area:web`, `area:api`, `area:domain`, `area:pipeline`, `area:infra`, `type:feat`, `type:fix`, `type:chore`, `type:docs`, `later`, `good-first`.
 
 ## Definition of done

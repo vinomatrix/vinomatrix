@@ -1,0 +1,8 @@
+{
+  "effect": {
+    "repo": "https://github.com/Effect-TS/effect.git",
+    "ref": "effect@4.1.2",
+    "description": "Effect v4 source pinned to the installed release. Start from ai-docs/src/.",
+    "mountDir": "effect"
+  }
+}

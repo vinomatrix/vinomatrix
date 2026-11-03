@@ -6,7 +6,7 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig(
   {
-    ignores: ["**/dist/**", "**/coverage/**", "tools/**"],
+    ignores: ["**/dist/**", "**/coverage/**", "tools/**", "skills/external/**"],
   },
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,

@@ -21,3 +21,6 @@ tools/pipeline/.cache/
 .DS_Store
 Thumbs.db
 .idea/
+
+# Upstream source mirrors (pnpm skills:mount)
+skills/external/
