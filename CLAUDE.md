@@ -31,27 +31,32 @@ Run `pnpm check && pnpm test` before every commit. CI runs the same.
 ## Conventions
 
 **Effect**
+
 - Domain and API code is Effect. Errors are typed (`Data.TaggedError`), never thrown.
 - Services via `Context.Tag` + `Layer`. Dependencies are injected, never imported as singletons.
 - Schemas in `packages/domain/src/schema/`. API contract in `packages/domain/src/api/` (HttpApi groups). The web client imports the contract — never hand-writes request/response types.
 - No `Effect.runPromise` outside `main.ts` and tests.
 
 **React**
+
 - Idiomatic React. No Effect inside components; the API client (`apps/web/src/api/`) wraps HttpApiClient and exposes plain promises to TanStack Query.
 - Function components, hooks, no class components, no Redux.
 - Components are small; one per file; colocated `*.test.tsx` where logic exists.
 - Styling: CSS modules + design tokens in `apps/web/src/styles/tokens.css`. No Tailwind.
 
 **Decoder engine**
+
 - `decode(input: DecodeInput): DecodeResult` — pure, deterministic.
 - Every rule is a named object in `packages/domain/src/rules/` with `id`, `when`, `then`, `explain`. The result lists the ids of rules that fired.
-- Add a snapshot test for every rule. Changing a rule's output requires updating the snapshot *and* a line in `docs/RULES_CHANGELOG.md`.
+- Add a snapshot test for every rule. Changing a rule's output requires updating the snapshot _and_ a line in `docs/RULES_CHANGELOG.md`.
 
 **Geo**
+
 - Coordinates: WGS84 (EPSG:4326) at API boundary and in GeoJSON; EPSG:2056 (LV95) in PostGIS and the pipeline. Transform at the edge, document it.
 - Never load a whole region into memory in the API. Spatial queries live in SQL.
 
 **Python pipeline**
+
 - `uv` for deps, `ruff` for lint/format, `pytest`. Type hints everywhere.
 - Each step is a function `step_x(ctx) -> None`, re-runnable. Downloads cached under `tools/pipeline/.cache/` (gitignored).
 
