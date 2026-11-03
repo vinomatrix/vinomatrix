@@ -3,7 +3,9 @@ name = "vinomatrix-pipeline"
 version = "0.0.0"
 description = "Loads Neuchâtel vineyard geodata (SITN, swissALTI3D) into PostGIS."
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "psycopg[binary]>=3.3.7",
+]
 
 [project.scripts]
 pipeline = "pipeline.cli:main"

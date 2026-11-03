@@ -38,6 +38,9 @@ importers:
       '@effect/platform-node':
         specifier: 4.1.2
         version: 4.1.2(effect@4.1.2)(redis@6.3.1)
+      '@effect/sql-pg':
+        specifier: 4.1.2
+        version: 4.1.2(effect@4.1.2)
       '@vinomatrix/domain':
         specifier: workspace:*
         version: link:../../packages/domain
@@ -165,6 +168,11 @@ packages:
     peerDependencies:
       effect: ^4.1.2
       redis: '>=5.1.0 <7.0.0'
+
+  '@effect/sql-pg@4.1.2':
+    resolution: {integrity: sha512-0UehR7B5W8dC+dX6fDeWStLbVbBb2M4pk4HBATEeH0cmV4Odl2lckTg0jFmLuadekTLa4OyB+bZQo1yTG1y2Mw==}
+    peerDependencies:
+      effect: ^4.1.2
 
   '@eslint-community/eslint-utils@4.10.1':
     resolution: {integrity: sha512-cuadcxVFE8sDK6iWJbs8Sn0av2Nrh2QSGQhVlBW9AaAHqHwjWsZHT8LJ4hFGPh7ASBV2deFdM7H/DPjulmh8rg==}
@@ -1279,6 +1287,10 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  '@effect/sql-pg@4.1.2(effect@4.1.2)':
+    dependencies:
+      effect: 4.1.2
 
   '@eslint-community/eslint-utils@4.10.1(eslint@10.14.0)':
     dependencies:
