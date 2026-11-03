@@ -12,10 +12,26 @@ concurrency:
 permissions:
   contents: read
 
+# Both jobs get a fresh PostGIS (same image as docker-compose.yml), migrated before tests,
+# so the API e2e tests and the pipeline integration tests run instead of skipping.
+env:
+  DATABASE_URL: postgres://vinomatrix:vinomatrix@localhost:5432/vinomatrix
+
 jobs:
   node:
     name: check + test
     runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgis/postgis:16-3.6
+        env:
+          POSTGRES_USER: vinomatrix
+          POSTGRES_PASSWORD: vinomatrix
+          POSTGRES_DB: vinomatrix
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U vinomatrix -d vinomatrix"
+          --health-interval 2s --health-timeout 5s --health-retries 30
     steps:
       - uses: actions/checkout@v7
       # pnpm version comes from packageManager in package.json
@@ -26,28 +42,40 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
+      - run: pnpm db:migrate
       - run: pnpm test
 
   pipeline:
     name: pipeline (ruff + pytest)
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: tools/pipeline
+    services:
+      db:
+        image: postgis/postgis:16-3.6
+        env:
+          POSTGRES_USER: vinomatrix
+          POSTGRES_PASSWORD: vinomatrix
+          POSTGRES_DB: vinomatrix
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U vinomatrix -d vinomatrix"
+          --health-interval 2s --health-timeout 5s --health-retries 30
     steps:
       - uses: actions/checkout@v7
-      # The pipeline lands in #5; until then this job passes without running anything.
-      - id: present
-        working-directory: .
-        run: echo "found=${{ hashFiles('tools/pipeline/pyproject.toml') != '' }}" >> "$GITHUB_OUTPUT"
-      - if: steps.present.outputs.found == 'true'
-        # setup-uv publishes exact tags only, no floating major tag
-        uses: astral-sh/setup-uv@v10.3.3
+      # The schema is owned by apps/api migrations, so Node runs them before pytest.
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter @vinomatrix/api...
+      - run: pnpm db:migrate
+      # setup-uv publishes exact tags only, no floating major tag
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
-      - if: steps.present.outputs.found == 'true'
+      - working-directory: tools/pipeline
         run: uv run ruff check .
-      - if: steps.present.outputs.found == 'true'
+      - working-directory: tools/pipeline
         run: uv run ruff format --check .
-      - if: steps.present.outputs.found == 'true'
+      - working-directory: tools/pipeline
         run: uv run pytest
