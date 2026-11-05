@@ -23,7 +23,7 @@ const routesWith = (repo: Layer.Layer<ParcelRepo, never, SqlClient.SqlClient>) =
     ApiRoutes.pipe(
       Layer.provide(repo),
       Layer.provide(PgLive),
-      Layer.provide(HttpServer.layerServices),
+      Layer.provideMerge(HttpServer.layerServices),
       Layer.orDie,
     ),
   );

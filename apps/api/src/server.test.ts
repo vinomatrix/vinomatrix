@@ -29,7 +29,8 @@ describe("ApiRoutes (in memory)", () => {
   const { handler, dispose } = HttpRouter.toWebHandler(
     ApiRoutes.pipe(
       Layer.provide(ParcelRepo.layerMemory([fixture])),
-      Layer.provide(HttpServer.layerServices),
+      // provideMerge: the compression middleware also needs HttpPlatform at request time.
+      Layer.provideMerge(HttpServer.layerServices),
     ),
   );
   afterAll(dispose);
@@ -61,5 +62,40 @@ describe("ApiRoutes (in memory)", () => {
 
   it("answers 404 for routes outside the contract", async () => {
     expect((await get("/nope")).status).toBe(404);
+  });
+});
+
+describe("ApiRoutes compression", () => {
+  // Above the middleware's 1 KB minimum, like any real bbox.
+  const many = Array.from({ length: 20 }, (_, i) => ({
+    ...fixture,
+    id: Schema.decodeSync(ParcelId)(`TEST_${String(i)}`),
+  }));
+  const { handler, dispose } = HttpRouter.toWebHandler(
+    ApiRoutes.pipe(
+      Layer.provide(ParcelRepo.layerMemory(many)),
+      Layer.provideMerge(HttpServer.layerServices),
+    ),
+  );
+  afterAll(dispose);
+
+  const get = (acceptEncoding?: string) =>
+    handler(
+      new Request("http://localhost/parcels?bbox=6.8,46.9,7.0,47.05", {
+        headers: acceptEncoding === undefined ? {} : { "accept-encoding": acceptEncoding },
+      }),
+    );
+
+  it("gzips the response when the client accepts it", async () => {
+    const response = await get("gzip");
+    expect(response.headers.get("content-encoding")).toBe("gzip");
+    expect(response.headers.get("vary")).toContain("Accept-Encoding");
+  });
+
+  it("sends plain JSON to clients that do not ask for compression", async () => {
+    const response = await get();
+    expect(response.headers.get("content-encoding")).toBeNull();
+    const body: unknown = await response.json();
+    expect(Schema.decodeUnknownSync(ParcelCollection)(body).features).toHaveLength(20);
   });
 });
