@@ -14,3 +14,20 @@ COPY apps/api/package.json apps/api/
 COPY packages/domain/package.json packages/domain/
 # The API and its workspace dependencies (the trailing "..."), production only, exactly as locked.
 RUN pnpm install --frozen-lockfile --prod --filter "@vinomatrix/api..."
+
+# Final image: Node, the installed node_modules and the sources. pnpm and its store stay behind in deps.
+FROM node:22-alpine AS runtime
+ENV NODE_ENV=production
+WORKDIR /app
+COPY --from=deps /app ./
+COPY packages/domain/src packages/domain/src
+COPY apps/api/src apps/api/src
+# Files stay owned by root: the process can read the code but not change it.
+USER node
+WORKDIR /app/apps/api
+EXPOSE 3000
+# Liveness only: /health does not touch the database. busybox wget ships with alpine.
+HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget -q --spider http://127.0.0.1:3000/health || exit 1
+# Exec form: node is PID 1 and receives SIGTERM directly, so the Effect runtime shuts down cleanly.
+CMD ["node", "src/main.ts"]
