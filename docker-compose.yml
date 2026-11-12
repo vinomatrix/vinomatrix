@@ -1,5 +1,18 @@
-# Local development database only. Production uses a managed Postgres with the same PostGIS major (#12).
+# Local stack. `pnpm db:up` starts only `db` (for `pnpm dev`); `docker compose up -d --build` also runs the API image.
 services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      # Services reach each other by service name on the compose network.
+      DATABASE_URL: postgres://vinomatrix:vinomatrix@db:5432/vinomatrix
+    ports:
+      - "${API_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
     image: postgis/postgis:16-3.6
     environment:
