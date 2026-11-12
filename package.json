@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "check": "pnpm typecheck && pnpm lint && prettier --check .",
-    "db:up": "docker compose up -d --wait",
+    "db:up": "docker compose up -d --wait db",
     "db:down": "docker compose down",
     "db:migrate": "pnpm --filter @vinomatrix/api migrate",
     "skills:mount": "node scripts/skills-external.mjs mount",

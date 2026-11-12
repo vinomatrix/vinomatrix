@@ -1,0 +1,21 @@
+# Build context for apps/api/Dockerfile. Anything listed here never reaches the Docker daemon.
+
+# Secrets: runtime config comes from environment variables, never from the image.
+.env
+.env.*
+!.env.example
+
+# Installed inside the image for linux/musl; the host's (Windows) copy must not leak in.
+**/node_modules
+
+# Not needed to run the API.
+.git
+.github
+docs
+skills
+tools
+**/coverage
+**/dist
+**/*.tsbuildinfo
+**/.vite
+**/debug.log
