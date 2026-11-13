@@ -29,5 +29,8 @@ EXPOSE 3000
 # Liveness only: /health does not touch the database. busybox wget ships with alpine.
 HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
   CMD wget -q --spider http://127.0.0.1:3000/health || exit 1
-# Exec form: node is PID 1 and receives SIGTERM directly, so the Effect runtime shuts down cleanly.
-CMD ["node", "src/main.ts"]
+# Migrate with this image's code, then serve. A failed migration exits non-zero, so the container
+# never turns healthy and a rolling deploy keeps the previous version (Coolify's pre-deployment
+# command would run the *old* container's migrations). `exec` replaces sh, so node is PID 1 and
+# receives SIGTERM directly. Assumes a single instance: several replicas would migrate concurrently.
+CMD ["sh", "-c", "node src/db/migrate.ts && exec node src/main.ts"]
