@@ -55,23 +55,21 @@ One project, environment `production`.
 | Exposed port      | 3000                                                                                                 |
 | Healthcheck       | the Dockerfile's `HEALTHCHECK` (`GET /health`)                                                       |
 | Pre-deployment    | empty (see Migrations)                                                                               |
-| Watch paths       | `apps/api/**`, `packages/domain/**`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`         |
 
 **Web** (Application → Public repository)
 
-| Setting           | Value                                                                                                              |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------ |
-| Repository/branch | this repository, `main`                                                                                            |
-| Build pack        | Dockerfile                                                                                                         |
-| Base directory    | `/`                                                                                                                |
-| Dockerfile        | `apps/web/Dockerfile` (Node builds `dist/`, the final image is nginx-unprivileged)                                 |
-| Domain            | `https://app.<server-ip>.sslip.io`                                                                                 |
-| Exposed port      | 8080 (Coolify's default is 3000, which would give a healthy container behind a 502)                                |
-| Healthcheck       | the Dockerfile's `HEALTHCHECK` (`GET /`)                                                                           |
-| Environment       | none: the bundle calls `/api` on its own origin                                                                    |
-| Watch paths       | `apps/web/**`, `packages/domain/**`, `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `tsconfig.base.json` |
+| Setting           | Value                                                                               |
+| ----------------- | ----------------------------------------------------------------------------------- |
+| Repository/branch | this repository, `main`                                                             |
+| Build pack        | Dockerfile                                                                          |
+| Base directory    | `/`                                                                                 |
+| Dockerfile        | `apps/web/Dockerfile` (Node builds `dist/`, the final image is nginx-unprivileged)  |
+| Domain            | `https://app.<server-ip>.sslip.io`                                                  |
+| Exposed port      | 8080 (Coolify's default is 3000, which would give a healthy container behind a 502) |
+| Healthcheck       | the Dockerfile's `HEALTHCHECK` (`GET /`)                                            |
+| Environment       | none: the bundle calls `/api` on its own origin                                     |
 
-With watch paths, a push redeploys only the resources whose files changed; a change in `docs/` redeploys nothing.
+Every push to `main` redeploys both resources, whatever files changed: this Coolify version (v4.7.5) has no watch paths setting for these resources. A redeploy is a rolling update, so it costs a build, not downtime.
 
 ## Environment variables
 
