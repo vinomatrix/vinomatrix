@@ -15,6 +15,8 @@ export const ParcelFeature = Schema.Struct({
   geometry: MultiPolygon,
   properties: Schema.Struct({
     surfaceM2: Schema.NullOr(Schema.Int),
+    // Share of the parcel declared as vines (0..1); null until the pipeline has run. See docs/DATA.md.
+    plantedShare: Schema.NullOr(Schema.Finite),
   }),
 });
 export type ParcelFeature = typeof ParcelFeature.Type;

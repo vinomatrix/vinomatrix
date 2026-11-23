@@ -1,0 +1,12 @@
+.legend {
+  position: absolute;
+  bottom: var(--mantine-spacing-xl);
+  left: var(--mantine-spacing-md);
+  max-width: 17rem;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
