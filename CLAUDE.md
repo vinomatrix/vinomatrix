@@ -44,7 +44,8 @@ Run `pnpm check && pnpm test` before every commit. CI runs the same.
 - Idiomatic React. No Effect inside components; the API client (`apps/web/src/api/`) wraps HttpApiClient and exposes plain promises to TanStack Query.
 - Function components, hooks, no class components, no Redux.
 - Components are small; one per file; colocated `*.test.tsx` where logic exists.
-- Styling: CSS modules + design tokens in `apps/web/src/styles/tokens.css`. No Tailwind.
+- UI components: Mantine (see `docs/adr/0002-web-design-system.md`). Theme in `apps/web/src/styles/theme.ts` is the single source for colors, fonts and radius.
+- Styling: Mantine props first, then CSS modules reading `--mantine-*` variables. No Tailwind, no CSS-in-JS.
 
 **Decoder engine**
 
