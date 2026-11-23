@@ -1,11 +1,13 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+import { Alert } from "@mantine/core";
 import type { Bbox } from "@vinomatrix/domain/schema";
 import { setWorkerUrl } from "maplibre-gl";
 import { useState } from "react";
 import { Layer, Map, Source } from "react-map-gl/maplibre";
 import { useParcels } from "../api/useParcels.ts";
 import { fr } from "../i18n/fr.ts";
+import { WINE } from "../styles/theme.ts";
 import { toBbox } from "./bbox.ts";
 import styles from "./ParcelMap.module.css";
 
@@ -19,8 +21,8 @@ const BASEMAP = "https://vectortiles.geo.admin.ch/styles/ch.swisstopo.lightbasem
 // so parcels load alongside the basemap tiles instead of waiting for the map's load event.
 const NE_VINEYARDS: [number, number, number, number] = [6.76, 46.86, 7.08, 47.07];
 
-// MapLibre paint cannot read CSS variables; these mirror --color-accent.
-const PARCEL_COLOR = "#7b1e3a";
+// MapLibre paint cannot read CSS variables, so it takes the hex from the theme.
+const PARCEL_COLOR = WINE[8];
 
 export function ParcelMap() {
   const [bbox, setBbox] = useState<Bbox>(NE_VINEYARDS);
@@ -52,9 +54,9 @@ export function ParcelMap() {
         )}
       </Map>
       {isError && (
-        <p role="alert" className={styles.error}>
+        <Alert color="red" className={styles.error}>
           {fr.map.loadError}
-        </p>
+        </Alert>
       )}
     </div>
   );

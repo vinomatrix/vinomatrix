@@ -15,5 +15,6 @@ export default defineConfig({
   preview: { proxy },
   test: {
     environment: "jsdom",
+    setupFiles: ["src/test/setup.ts"],
   },
 });

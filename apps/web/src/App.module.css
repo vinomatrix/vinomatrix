@@ -5,22 +5,7 @@
 
 .header {
   position: absolute;
-  top: var(--space-4);
-  left: var(--space-4);
+  top: var(--mantine-spacing-md);
+  left: var(--mantine-spacing-md);
   max-width: 20rem;
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-}
-
-.title {
-  margin: 0 0 var(--space-1);
-  color: var(--color-accent);
-  font-size: var(--font-size-xl);
-}
-
-.tagline {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
 }
