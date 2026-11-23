@@ -13,6 +13,7 @@ const ParcelRow = Schema.Struct({
   id: ParcelId,
   geometry: Schema.fromJsonString(MultiPolygon),
   surface_m2: Schema.NullOr(Schema.Int),
+  planted_share: Schema.NullOr(Schema.Finite),
 });
 const decodeRows = Schema.decodeUnknownEffect(Schema.Array(ParcelRow));
 
@@ -49,7 +50,8 @@ export class ParcelRepo extends Context.Service<
           const rows = yield* sql`
             SELECT source_id AS id,
                    ST_AsGeoJSON(ST_Transform(geom, 4326), 6) AS geometry,
-                   surface_m2
+                   surface_m2,
+                   planted_share
             FROM parcel
             WHERE ST_Intersects(
               geom,
@@ -60,11 +62,11 @@ export class ParcelRepo extends Context.Service<
           `.pipe(Effect.orDie);
           const parcels = yield* decodeRows(rows).pipe(Effect.orDie);
           return toCollection(
-            parcels.map(({ id, geometry, surface_m2 }) => ({
+            parcels.map(({ id, geometry, surface_m2, planted_share }) => ({
               type: "Feature" as const,
               id,
               geometry,
-              properties: { surfaceM2: surface_m2 },
+              properties: { surfaceM2: surface_m2, plantedShare: planted_share },
             })),
             maxFeatures,
           );

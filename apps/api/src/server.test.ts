@@ -21,7 +21,7 @@ const fixture: ParcelFeature = {
       ],
     ],
   },
-  properties: { surfaceM2: 1234 },
+  properties: { surfaceM2: 1234, plantedShare: 0.75 },
 };
 
 // Same routes as production, with the in-memory ParcelRepo instead of PostGIS.

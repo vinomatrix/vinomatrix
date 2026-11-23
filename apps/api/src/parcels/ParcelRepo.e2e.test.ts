@@ -45,9 +45,9 @@ describe.skipIf(!process.env.DATABASE_URL)("GET /parcels against PostGIS", () =>
     await removeTestParcels();
     await runSql(
       (sql) => sql`
-        INSERT INTO parcel (source_id, geom, surface_m2) VALUES
-          ('TEST_E2E_1', ST_Multi(ST_MakeEnvelope(2611000, 1267000, 2611010, 1267010, 2056)), 100),
-          ('TEST_E2E_2', ST_Multi(ST_MakeEnvelope(2611050, 1267000, 2611060, 1267010, 2056)), 100)
+        INSERT INTO parcel (source_id, geom, surface_m2, planted_share) VALUES
+          ('TEST_E2E_1', ST_Multi(ST_MakeEnvelope(2611000, 1267000, 2611010, 1267010, 2056)), 100, 0.75),
+          ('TEST_E2E_2', ST_Multi(ST_MakeEnvelope(2611050, 1267000, 2611060, 1267010, 2056)), 100, NULL)
       `,
     );
   });
@@ -62,6 +62,7 @@ describe.skipIf(!process.env.DATABASE_URL)("GET /parcels against PostGIS", () =>
     const collection = await getParcels(api.handler, BASEL);
 
     expect(collection.features.map((f) => f.id)).toEqual(["TEST_E2E_1", "TEST_E2E_2"]);
+    expect(collection.features.map((f) => f.properties.plantedShare)).toEqual([0.75, null]);
     expect(collection.truncated).toBe(false);
     const [lon, lat] = collection.features[0]?.geometry.coordinates[0]?.[0]?.[0] ?? [];
     expect(lon).toBeCloseTo(7.588, 2);

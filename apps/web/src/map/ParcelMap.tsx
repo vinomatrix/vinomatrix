@@ -7,9 +7,10 @@ import { useState } from "react";
 import { Layer, Map, Source } from "react-map-gl/maplibre";
 import { useParcels } from "../api/useParcels.ts";
 import { fr } from "../i18n/fr.ts";
-import { WINE } from "../styles/theme.ts";
 import { toBbox } from "./bbox.ts";
+import { MapLegend } from "./MapLegend.tsx";
 import styles from "./ParcelMap.module.css";
+import { FILL_PAINT, LINE_PAINT, PLANTED_ONLY } from "./parcelStyle.ts";
 
 // MapLibre 6 needs the worker URL set once under a bundler (official Vite setup, see maplibre.org Installation).
 setWorkerUrl(workerUrl);
@@ -21,12 +22,12 @@ const BASEMAP = "https://vectortiles.geo.admin.ch/styles/ch.swisstopo.lightbasem
 // so parcels load alongside the basemap tiles instead of waiting for the map's load event.
 const NE_VINEYARDS: [number, number, number, number] = [6.76, 46.86, 7.08, 47.07];
 
-// MapLibre paint cannot read CSS variables, so it takes the hex from the theme.
-const PARCEL_COLOR = WINE[8];
-
 export function ParcelMap() {
   const [bbox, setBbox] = useState<Bbox>(NE_VINEYARDS);
   const { data, isError } = useParcels(bbox);
+  const [plantedOnly, setPlantedOnly] = useState(false);
+  // Filtering happens in MapLibre on the loaded features: toggling sends no request.
+  const filter = plantedOnly ? PLANTED_ONLY : true;
 
   return (
     <div className={styles.map}>
@@ -40,19 +41,12 @@ export function ParcelMap() {
       >
         {data && (
           <Source id="parcels" type="geojson" data={data}>
-            <Layer
-              id="parcels-fill"
-              type="fill"
-              paint={{ "fill-color": PARCEL_COLOR, "fill-opacity": 0.25 }}
-            />
-            <Layer
-              id="parcels-line"
-              type="line"
-              paint={{ "line-color": PARCEL_COLOR, "line-width": 1 }}
-            />
+            <Layer id="parcels-fill" type="fill" paint={FILL_PAINT} filter={filter} />
+            <Layer id="parcels-line" type="line" paint={LINE_PAINT} filter={filter} />
           </Source>
         )}
       </Map>
+      <MapLegend plantedOnly={plantedOnly} onPlantedOnlyChange={setPlantedOnly} />
       {isError && (
         <Alert color="red" className={styles.error}>
           {fr.map.loadError}
