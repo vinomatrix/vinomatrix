@@ -1,14 +1,14 @@
-import { alpha, ColorSwatch, Group, Paper, Stack, Switch, Text } from "@mantine/core";
+import { ColorSwatch, Group, lighten, Paper, Stack, Switch, Text } from "@mantine/core";
 import { fr } from "../i18n/fr.ts";
 import styles from "./MapLegend.module.css";
 import { PARCEL_CLASSES } from "./parcelStyle.ts";
 
 interface Props {
-  readonly plantedOnly: boolean;
-  readonly onPlantedOnlyChange: (plantedOnly: boolean) => void;
+  readonly hideUndeclared: boolean;
+  readonly onHideUndeclaredChange: (hideUndeclared: boolean) => void;
 }
 
-export function MapLegend({ plantedOnly, onPlantedOnlyChange }: Props) {
+export function MapLegend({ hideUndeclared, onHideUndeclaredChange }: Props) {
   return (
     <Paper component="section" aria-label={fr.legend.title} className={styles.legend} p="sm">
       <Stack gap="xs">
@@ -19,7 +19,7 @@ export function MapLegend({ plantedOnly, onPlantedOnlyChange }: Props) {
           {PARCEL_CLASSES.map(({ key, color, fillOpacity }) => (
             <Group component="li" key={key} gap="xs" wrap="nowrap">
               <ColorSwatch
-                color={alpha(color, fillOpacity)}
+                color={lighten(color, 1 - fillOpacity)}
                 size={14}
                 radius="xs"
                 withShadow={false}
@@ -31,10 +31,10 @@ export function MapLegend({ plantedOnly, onPlantedOnlyChange }: Props) {
         </Stack>
         <Switch
           size="sm"
-          label={fr.legend.plantedOnly}
-          checked={plantedOnly}
+          label={fr.legend.hideUndeclared}
+          checked={hideUndeclared}
           onChange={(event) => {
-            onPlantedOnlyChange(event.currentTarget.checked);
+            onHideUndeclaredChange(event.currentTarget.checked);
           }}
         />
         <Text size="xs" c="dimmed">

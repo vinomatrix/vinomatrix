@@ -10,7 +10,7 @@ import { fr } from "../i18n/fr.ts";
 import { toBbox } from "./bbox.ts";
 import { MapLegend } from "./MapLegend.tsx";
 import styles from "./ParcelMap.module.css";
-import { FILL_PAINT, LINE_PAINT, PLANTED_ONLY } from "./parcelStyle.ts";
+import { FILL_PAINT, LINE_PAINT, WITH_VINES } from "./parcelStyle.ts";
 
 // MapLibre 6 needs the worker URL set once under a bundler (official Vite setup, see maplibre.org Installation).
 setWorkerUrl(workerUrl);
@@ -25,9 +25,9 @@ const NE_VINEYARDS: [number, number, number, number] = [6.76, 46.86, 7.08, 47.07
 export function ParcelMap() {
   const [bbox, setBbox] = useState<Bbox>(NE_VINEYARDS);
   const { data, isError } = useParcels(bbox);
-  const [plantedOnly, setPlantedOnly] = useState(false);
+  const [hideUndeclared, setHideUndeclared] = useState(false);
   // Filtering happens in MapLibre on the loaded features: toggling sends no request.
-  const filter = plantedOnly ? PLANTED_ONLY : true;
+  const filter = hideUndeclared ? WITH_VINES : true;
 
   return (
     <div className={styles.map}>
@@ -46,7 +46,7 @@ export function ParcelMap() {
           </Source>
         )}
       </Map>
-      <MapLegend plantedOnly={plantedOnly} onPlantedOnlyChange={setPlantedOnly} />
+      <MapLegend hideUndeclared={hideUndeclared} onHideUndeclaredChange={setHideUndeclared} />
       {isError && (
         <Alert color="red" className={styles.error}>
           {fr.map.loadError}

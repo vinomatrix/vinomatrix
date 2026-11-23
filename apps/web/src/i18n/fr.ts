@@ -12,10 +12,10 @@ export const fr = {
   legend: {
     title: "Part plantée en vigne",
     planted: "Plantée à plus de 50 %",
-    sparse: "Plantée à 50 % ou moins",
-    unknown: "Pas de données",
-    plantedOnly: "Seulement les vignes plantées",
-    note: "Selon les surfaces viticoles déclarées à l'agriculture. Les vignes non déclarées (p. ex. privées) comptent comme non plantées.",
+    partial: "Partiellement plantée",
+    undeclared: "Pas de vigne déclarée",
+    hideUndeclared: "Masquer les parcelles sans vigne déclarée",
+    note: "Selon les surfaces viticoles déclarées à l'agriculture. Les vignes non déclarées (p. ex. privées) n'y figurent pas.",
   },
 };
 

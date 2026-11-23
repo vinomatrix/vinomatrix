@@ -6,11 +6,11 @@ import { MapLegend } from "./MapLegend.tsx";
 
 describe("MapLegend", () => {
   it("lists one row per parcel class", () => {
-    renderWithTheme(<MapLegend plantedOnly={false} onPlantedOnlyChange={() => undefined} />);
+    renderWithTheme(<MapLegend hideUndeclared={false} onHideUndeclaredChange={() => undefined} />);
 
     const legend = screen.getByRole("region", { name: fr.legend.title });
     expect(legend.querySelectorAll("li")).toHaveLength(3);
-    for (const label of [fr.legend.planted, fr.legend.sparse, fr.legend.unknown]) {
+    for (const label of [fr.legend.planted, fr.legend.partial, fr.legend.undeclared]) {
       expect(screen.getByText(label)).toBeDefined();
     }
   });
@@ -18,14 +18,14 @@ describe("MapLegend", () => {
   it("reports the toggle state", () => {
     const onChange = vi.fn();
     const { rerender } = renderWithTheme(
-      <MapLegend plantedOnly={false} onPlantedOnlyChange={onChange} />,
+      <MapLegend hideUndeclared={false} onHideUndeclaredChange={onChange} />,
     );
 
-    const toggle = screen.getByRole("switch", { name: fr.legend.plantedOnly });
+    const toggle = screen.getByRole("switch", { name: fr.legend.hideUndeclared });
     fireEvent.click(toggle);
     expect(onChange).toHaveBeenLastCalledWith(true);
 
-    rerender(<MapLegend plantedOnly onPlantedOnlyChange={onChange} />);
+    rerender(<MapLegend hideUndeclared onHideUndeclaredChange={onChange} />);
     fireEvent.click(toggle);
     expect(onChange).toHaveBeenLastCalledWith(false);
   });
