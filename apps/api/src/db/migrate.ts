@@ -2,11 +2,13 @@ import { NodeRuntime, NodeServices } from "@effect/platform-node";
 import { PgMigrator } from "@effect/sql-pg";
 import { Effect, Layer } from "effect";
 import createParcel from "../migrations/0001_create_parcel.ts";
+import parcelPlantedShare from "../migrations/0002_parcel_planted_share.ts";
 import { PgLive } from "./Db.ts";
 
 // Entry point for `pnpm db:migrate`; like main.ts, the only other place that runs effects.
 const migrations = {
   "0001_create_parcel": createParcel,
+  "0002_parcel_planted_share": parcelPlantedShare,
 };
 
 const program = PgMigrator.run({ loader: PgMigrator.fromRecord(migrations) }).pipe(
